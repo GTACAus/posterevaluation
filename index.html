@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>Scientific Poster Evaluation Tool</title>
+
+<!-- FIGTREE FONT -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+    --blue:#1a73e8;
+    --light-blue:#e8f0fe;
+    --border:#dfe3eb;
+    --text:#202124;
+    --muted:#5f6368;
+    --bg:#f6f8fc;
+    --card:#ffffff;
+    --success:#0f9d58;
+}
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    padding:40px 20px;
+    font-family:'Figtree', sans-serif;
+    background:var(--bg);
+    color:var(--text);
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+}
+
+.hero{
+    background:linear-gradient(135deg,#1a73e8,#5e97f6);
+    color:white;
+    padding:32px;
+    border-radius:24px;
+    margin-bottom:28px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.08);
+}
+
+.hero h1{
+    margin:0 0 10px;
+    font-size:2.2rem;
+}
+
+.hero p{
+    margin:0;
+    opacity:0.95;
+    line-height:1.6;
+}
+
+.selector-card{
+    background:var(--card);
+    border-radius:24px;
+    padding:28px;
+    margin-bottom:28px;
+    box-shadow:0 6px 24px rgba(0,0,0,0.06);
+}
+
+.selector-title{
+    font-size:1.3rem;
+    font-weight:700;
+    margin-bottom:20px;
+}
+
+.section-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:16px;
+}
+
+.section-option{
+    background:#fff;
+    border:2px solid var(--border);
+    border-radius:18px;
+    padding:16px;
+    cursor:pointer;
+    transition:0.2s ease;
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.section-option:hover{
+    border-color:var(--blue);
+    transform:translateY(-2px);
+}
+
+.section-option input{
+    width:20px;
+    height:20px;
+    accent-color:var(--blue);
+}
+
+.section-option.active{
+    border-color:var(--blue);
+    background:var(--light-blue);
+}
+
+.section-card{
+    display:none;
+    background:var(--card);
+    border-radius:24px;
+    padding:28px;
+    margin-bottom:28px;
+    box-shadow:0 6px 24px rgba(0,0,0,0.06);
+}
+
+.section-card.active{
+    display:block;
+}
+
+.section-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:24px;
+    flex-wrap:wrap;
+    gap:10px;
+}
+
+.section-header h2{
+    margin:0;
+    font-size:1.5rem;
+}
+
+.total-badge{
+    background:var(--light-blue);
+    color:var(--blue);
+    padding:12px 18px;
+    border-radius:999px;
+    font-weight:700;
+}
+
+.criteria{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+}
+
+.criteria-row{
+    display:grid;
+    grid-template-columns:1fr 120px 120px;
+    gap:16px;
+    align-items:center;
+    padding:18px;
+    border:1px solid var(--border);
+    border-radius:18px;
+    background:#fff;
+}
+
+.criteria-text{
+    line-height:1.5;
+    font-weight:500;
+}
+
+.score-input{
+    width:100%;
+    padding:14px;
+    border-radius:14px;
+    border:1px solid var(--border);
+    font-size:1rem;
+    text-align:center;
+    font-family:'Figtree', sans-serif;
+    transition:0.2s ease;
+}
+
+.score-input:focus{
+    outline:none;
+    border-color:var(--blue);
+    box-shadow:0 0 0 4px rgba(26,115,232,0.15);
+}
+
+.feedback-box{
+    margin-top:24px;
+}
+
+.feedback-box textarea{
+    width:100%;
+    min-height:120px;
+    border-radius:18px;
+    border:1px solid var(--border);
+    padding:18px;
+    font-family:'Figtree', sans-serif;
+    resize:vertical;
+    font-size:1rem;
+}
+
+.feedback-box textarea:focus{
+    outline:none;
+    border-color:var(--blue);
+    box-shadow:0 0 0 4px rgba(26,115,232,0.15);
+}
+
+.bottom-summary{
+    position:sticky;
+    bottom:20px;
+    background:white;
+    border-radius:24px;
+    padding:24px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.12);
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:20px;
+    z-index:100;
+}
+
+.summary-box{
+    flex:1;
+    min-width:240px;
+}
+
+.summary-label{
+    color:var(--muted);
+    margin-bottom:6px;
+}
+
+.summary-score{
+    font-size:2.2rem;
+    font-weight:700;
+    color:var(--success);
+}
+
+.instructions{
+    margin-top:10px;
+    color:var(--muted);
+    line-height:1.6;
+}
+
+@media(max-width:800px){
+
+    .criteria-row{
+        grid-template-columns:1fr;
+    }
+
+    .bottom-summary{
+        flex-direction:column;
+    }
+
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="hero">
+        <h1>Scientific Poster Evaluation Tool</h1>
+        <p>
+            Select the poster sections you want to assess, enter scores from 0–4,
+            and the totals will calculate automatically.
+        </p>
+    </div>
+
+    <!-- SECTION SELECTOR -->
+    <div class="selector-card">
+
+        <div class="selector-title">
+            Choose which sections to mark
+        </div>
+
+        <div class="section-grid">
+
+            <label class="section-option">
+                <input type="checkbox" data-target="title-section">
+                <span>Investigation Title</span>
+            </label>
+
+            <label class="section-option">
+                <input type="checkbox" data-target="intro-section">
+                <span>Introduction</span>
+            </label>
+
+            <label class="section-option">
+                <input type="checkbox" data-target="results-section">
+                <span>Results</span>
+            </label>
+
+            <label class="section-option">
+                <input type="checkbox" data-target="discussion-section">
+                <span>Discussion</span>
+            </label>
+
+        </div>
+
+    </div>
+
+    <!-- TITLE SECTION -->
+    <div class="section-card" id="title-section">
+
+        <div class="section-header">
+            <h2>Investigation Question / Title</h2>
+            <div class="total-badge">
+                Section Total:
+                <span class="section-total">0</span> / 8
+            </div>
+        </div>
+
+        <div class="criteria">
+
+            <div class="criteria-row">
+                <div class="criteria-text">
+                    The title of the poster is a specific investigation question
+                </div>
+
+                <input class="score-input score-field"
+                       type="number"
+                       min="0"
+                       max="4"
+                       value="0">
+
+                <input class="score-input score-field"
+                       type="number"
+                       min="0"
+                       max="4"
+                       value="0">
+            </div>
+
+            <div class="criteria-row">
+                <div class="criteria-text">
+                    The investigation question is testable
+                </div>
+
+                <input class="score-input score-field"
+                       type="number"
+                       min="0"
+                       max="4"
+                       value="0">
+
+                <input class="score-input score-field"
+                       type="number"
+                       min="0"
+                       max="4"
+                       value="0">
+            </div>
+
+        </div>
+
+        <div class="feedback-box">
+            <textarea placeholder="How could you improve the investigation title?"></textarea>
+        </div>
+
+    </div>
+
+    <!-- INTRODUCTION SECTION -->
+    <div class="section-card" id="intro-section">
+
+        <div class="section-header">
+            <h2>Introduction</h2>
+            <div class="total-badge">
+                Section Total:
+                <span class="section-total">0</span> / 16
+            </div>
+        </div>
+
+        <div class="criteria">
+
+            <div class="criteria-row">
+                <div class="criteria-text">
+                    The introduction explains the purpose of the investigation
+                </div>
+
+                <input class="score-input score-field"
+                       type="number"
+                       min="0"
+                       max="4"
+                       value="0">
+
+                <input class="score-input score-field"
+                       type="number"
+                       min="0"
+                       max="4"
+                       value="0">
+            </div>
+
+            <div class="criteria-row">
+                <div class="criteria-text">
+                    Background concepts relating to the investigation are included
+                    and explained
+                </div>
+
+                <input class="score-input score-field"
+                       type="number"
+                       min="0"
+                       max="4"
+                       value="0">
+
+                <input class="score-input score-field"
+                       type="number"
+                       min="0"
+                       max="4"
+                       value="0">
+            </div>
+
+            <div class="criteria-row">
+                <div class="criteria-text">
+                    An aim is clearly stated which is relevant to the investigation
+                </div>
+
+                <input class="score-input score-field"
+                       type="number"
+                       min="0"
+                       max="4"
+                       value="0">
+
+                <input class="score-input score-field"
+                       type="number"
+                       min="0"
+                       max="4"
+                       value="0">
+            </div>
+
+            <div class="criteria-row">
+                <div class="criteria-text">
+                    The hypothesis includes a prediction for outcomes
+                </div>
+
+                <input class="score-input score-field"
+                       type="number"
+                       min="0"
+                       max="4"
+                       value="0">
+
+                <input class="score-input score-field"
+                       type="number"
+                       min="0"
+                       max="4"
+                       value="0">
+            </div>
+
+        </div>
+
+        <div class="feedback-box">
+            <textarea placeholder="Suggest how you could improve the introduction..."></textarea>
+        </div>
+
+    </div>
+
+    <!-- RESULTS SECTION -->
+    <div class="section-card" id="results-section">
+
+        <div class="section-header">
+            <h2>Results</h2>
+            <div class="total-badge">
+                Section Total:
+                <span class="section-total">0</span> / 12
+            </div>
+        </div>
+
+        <div class="criteria">
+
+            <div class="criteria-row">
+                <div class="criteria-text">
+                    The data collected addresses the aim
+                </div>
+
+                <input class="score-input score-field"
+                       type="number"
+                       min="0"
+                       max="4"
+                       value="0">
+
+                <input class="score-input score-field"
+                       type="number"
+                       min="0"
+                       max="4"
+                       value="0">
+            </div>
+
+            <div class="criteria-row">
+                <div class="criteria-text">
+                    Data presentation clearly shows trends and relationships
+                </div>
+
+                <input class="score-input score-field"
+                       type="number"
+                       min="0"
+                       max="4"
+                       value="0">
+
+                <input class="score-input score-field"
+                       type="number"
+                       min="0"
+                       max="4"
+                       value="0">
+            </div>
+
+            <div class="criteria-row">
+                <div class="criteria-text">
+                    Tables, figures and graphs follow scientific conventions
+                </div>
+
+                <input class="score-input score-field"
+                       type="number"
+                       min="0"
+                       max="4"
+                       value="0">
+
+                <input class="score-input score-field"
+                       type="number"
+                       min="0"
+                       max="4"
+                       value="0">
+            </div>
+
+        </div>
+
+        <div class="feedback-box">
+            <textarea placeholder="Suggest another way the data could be presented..."></textarea>
+        </div>
+
+    </div>
+
+    <!-- DISCUSSION SECTION -->
+    <div class="section-card" id="discussion-section">
+
+        <div class="section-header">
+            <h2>Discussion</h2>
+            <div class="total-badge">
+                Section Total:
+                <span class="section-total">0</span> / 16
+            </div>
+        </div>
+
+        <div class="criteria">
+
+            <div class="criteria-row">
+                <div class="criteria-text">
+                    The discussion analyses trends and scientific relationships
+                </div>
+
+                <input class="score-input score-field"
+                       type="number"
+                       min="0"
+                       max="4"
+                       value="0">
+
+                <input class="score-input score-field"
+                       type="number"
+                       min="0"
+                       max="4"
+                       value="0">
+            </div>
+
+            <div class="criteria-row">
+                <div class="criteria-text">
+                    The discussion references correlations between variables
+                </div>
+
+                <input class="score-input score-field"
+                       type="number"
+                       min="0"
+                       max="4"
+                       value="0">
+
+                <input class="score-input score-field"
+                       type="number"
+                       min="0"
+                       max="4"
+                       value="0">
+            </div>
+
+            <div class="criteria-row">
+                <div class="criteria-text">
+                    The experimental design has been critically evaluated
+                </div>
+
+                <input class="score-input score-field"
+                       type="number"
+                       min="0"
+                       max="4"
+                       value="0">
+
+                <input class="score-input score-field"
+                       type="number"
+                       min="0"
+                       max="4"
+                       value="0">
+            </div>
+
+            <div class="criteria-row">
+                <div class="criteria-text">
+                    Suggestions for improving precision and validity are included
+                </div>
+
+                <input class="score-input score-field"
+                       type="number"
+                       min="0"
+                       max="4"
+                       value="0">
+
+                <input class="score-input score-field"
+                       type="number"
+                       min="0"
+                       max="4"
+                       value="0">
+            </div>
+
+        </div>
+
+        <div class="feedback-box">
+            <textarea placeholder="Suggest how the discussion could be improved..."></textarea>
+        </div>
+
+    </div>
+
+    <!-- LIVE TOTALS -->
+    <div class="bottom-summary">
+
+        <div class="summary-box">
+            <div class="summary-label">Poster 1 Total</div>
+            <div class="summary-score" id="poster1Total">0</div>
+        </div>
+
+        <div class="summary-box">
+            <div class="summary-label">Poster 2 Total</div>
+            <div class="summary-score" id="poster2Total">0</div>
+        </div>
+
+        <div class="instructions">
+            Scores automatically update as you type.<br>
+            Use values between 0 and 4 for each criterion.
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+// SHOW/HIDE SECTIONS
+
+const checkboxes = document.querySelectorAll('.section-option input');
+
+checkboxes.forEach(box => {
+
+    box.addEventListener('change', () => {
+
+        const target = document.getElementById(box.dataset.target);
+
+        if(box.checked){
+            target.classList.add('active');
+            box.parentElement.classList.add('active');
+        } else {
+            target.classList.remove('active');
+            box.parentElement.classList.remove('active');
+        }
+
+        calculateTotals();
+
+    });
+
+});
+
+// CALCULATOR
+
+const scoreFields = document.querySelectorAll('.score-field');
+
+scoreFields.forEach(field => {
+
+    field.addEventListener('input', () => {
+
+        // prevent numbers outside 0-4
+        if(field.value > 4){
+            field.value = 4;
+        }
+
+        if(field.value < 0){
+            field.value = 0;
+        }
+
+        calculateTotals();
+
+    });
+
+});
+
+function calculateTotals(){
+
+    let poster1 = 0;
+    let poster2 = 0;
+
+    // calculate each section total
+    document.querySelectorAll('.section-card').forEach(section => {
+
+        let sectionTotal = 0;
+
+        const inputs = section.querySelectorAll('.score-field');
+
+        inputs.forEach((input, index) => {
+
+            const value = Number(input.value) || 0;
+
+            sectionTotal += value;
+
+            // even indexes = poster 1
+            if(index % 2 === 0){
+                poster1 += value;
+            } else {
+                poster2 += value;
+            }
+
+        });
+
+        section.querySelector('.section-total').innerText = sectionTotal;
+
+    });
+
+    document.getElementById('poster1Total').innerText = poster1;
+    document.getElementById('poster2Total').innerText = poster2;
+
+}
+
+calculateTotals();
+
+</script>
+
+</body>
+</html>
